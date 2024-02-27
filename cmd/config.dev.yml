@@ -1,0 +1,13 @@
+http:
+  host: ""
+  port: 8000
+
+database:
+  db:
+  username:
+  password:
+  host:
+  args:
+  max_open_conns: 10
+  max_idle_conns: 5
+  max_conn_life_time: 
