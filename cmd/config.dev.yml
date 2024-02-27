@@ -10,4 +10,5 @@ database:
   args:
   max_open_conns: 10
   max_idle_conns: 5
-  max_conn_life_time: 
+  max_conn_life_time: 60
+  

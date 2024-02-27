@@ -1,6 +1,8 @@
 package model
 
 type Config struct {
+	HTTP HTTP     `yaml:"http"`
+	DB   Database `yaml:"database"`
 }
 
 type HTTP struct {
