@@ -2,7 +2,9 @@ package main
 
 import (
 	"flag"
+	"fmt"
 
+	"github.com/nqvinh00/CakeAssignment/dao"
 	"github.com/nqvinh00/CakeAssignment/model"
 	"github.com/nqvinh00/CakeAssignment/pkg"
 
@@ -25,9 +27,12 @@ func main() {
 		log.Fatal().Str("path", *configPath).Err(err).Msg("failed to load config from file")
 	}
 
-	gormDB, err := pkg.ConnectDB(config.DB)
+	db, err := pkg.ConnectDB(config.DB)
 	if err != nil {
 		log.Fatal().Err(err).Msg("failed to connect to database")
 	}
+	defer db.Close()
 
+
+	userDAO := dao.NewUserDAO(db)
 }

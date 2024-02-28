@@ -1,10 +1,10 @@
-CREATE TABLE `user` IF NOT EXISTS (
+CREATE TABLE IF NOT EXISTS `user` (
     `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
     `fullname` varchar(100) NOT NULL DEFAULT '',
     `phone_number` varchar(11) NOT NULL DEFAULT '',
     `email` varchar(100) NOT NULL DEFAULT '',
     `username` varchar(100) NOT NULL DEFAULT '',
-    `register_campaign` varchar(12) NOT NULL DEFAULT '',
+    `campaign_id` bigint(20) unsigned NOT NULL DEFAULT 0,
     `status` tinyint NOT NULL DEFAULT 1,
     `login_attempt` tinyint NOT NULL DEFAULT 3,
     `checksum` bigint(20) unsigned NOT NULL,
@@ -16,7 +16,7 @@ CREATE TABLE `user` IF NOT EXISTS (
     KEY `idx_username` (`username`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
-CREATE TABLE `user_security` IF NOT EXISTS (
+CREATE TABLE IF NOT EXISTS `user_security` (
     `user_id` bigint(20) unsigned NOT NULL,
     `password` varbinary(60) NOT NULL,
     `checksum` bigint(20) unsigned NOT NULL,

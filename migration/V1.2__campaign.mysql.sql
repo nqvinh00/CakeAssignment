@@ -1,4 +1,4 @@
-CREATE TABLE `user_voucher` IF NOT EXISTS (
+CREATE TABLE IF NOT EXISTS `user_voucher` (
     `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
     `user_id` bigint(20) unsigned NOT NULL,
     `campaign_id` bigint(20) unsigned NOT NULL,
@@ -9,7 +9,7 @@ CREATE TABLE `user_voucher` IF NOT EXISTS (
     KEY `idx_user_id` (`user_id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
 
-CREATE TABLE `campaign` IF NOT EXISTS (
+CREATE TABLE IF NOT EXISTS `campaign` (
     `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
     `name` varchar(100) NOT NULL DEFAULT '',
     `status` tinyint NOT NULL DEFAULT 1,
