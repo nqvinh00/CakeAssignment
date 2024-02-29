@@ -1,6 +1,10 @@
 package model
 
-import "time"
+import (
+	"time"
+
+	"github.com/golang-jwt/jwt/v5"
+)
 
 type User struct {
 	ID           uint64    `db:"id"`
@@ -14,4 +18,17 @@ type User struct {
 	Checksum     uint64    `db:"checksum"`
 	CreatedAt    time.Time `db:"created_at"`
 	UpdatedAt    time.Time `db:"updated_at"`
+}
+
+type UserSec struct {
+	UserID    uint64    `db:"user_id"`
+	Password  []byte    `db:"password"`
+	CreatedAt time.Time `db:"created_at"`
+	UpdatedAt time.Time `db:"updated_at"`
+}
+
+type Claim struct {
+	Username string
+	Email    string
+	jwt.StandardClaims
 }

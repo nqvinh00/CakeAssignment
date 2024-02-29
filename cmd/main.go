@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/nqvinh00/CakeAssignment/dao"
+	"github.com/nqvinh00/CakeAssignment/handlers"
 	"github.com/nqvinh00/CakeAssignment/model"
 	"github.com/nqvinh00/CakeAssignment/pkg"
 
@@ -35,4 +36,9 @@ func main() {
 
 
 	userDAO := dao.NewUserDAO(db)
+	userSecDAO := dao.NewUserSecDAO(db)
+
+	httpd := handlers.NewHTTPD(userDAO, userSecDAO)
+	engine := httpd.SetupRouter()
+	engine.Run(fmt.Sprintf("%s:%d", config.HTTP.Host, config.HTTP.Port))
 }

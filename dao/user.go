@@ -37,8 +37,9 @@ var (
 )
 
 type IUserDAO interface {
-	Create(ctx context.Context, user *model.User) (err error)
+	Insert(ctx context.Context, user *model.User) (id uint64, err error)
 	Update(ctx context.Context, user *model.User) (err error)
+	Select(ctx context.Context, loginValue string) (user *model.User, err error)
 }
 
 type userDAO struct {
@@ -51,7 +52,7 @@ func NewUserDAO(db *sql.DB) IUserDAO {
 	}
 }
 
-func (u *userDAO) Create(ctx context.Context, user *model.User) (err error) {
+func (u *userDAO) Insert(ctx context.Context, user *model.User) (id uint64, err error) {
 	now := time.Now()
 	result, err := u.db.ExecContext(ctx, sqlInsertUser,
 		user.Fullname, user.PhoneNumber, user.Email, user.Username, user.CampaignID,
@@ -64,6 +65,12 @@ func (u *userDAO) Create(ctx context.Context, user *model.User) (err error) {
 		return
 	}
 
+	userID, err := result.LastInsertId()
+	if err != nil {
+		return
+	}
+
+	id = uint64(userID)
 	return
 }
 

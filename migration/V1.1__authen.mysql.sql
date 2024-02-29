@@ -19,7 +19,6 @@ CREATE TABLE IF NOT EXISTS `user` (
 CREATE TABLE IF NOT EXISTS `user_security` (
     `user_id` bigint(20) unsigned NOT NULL,
     `password` varbinary(60) NOT NULL,
-    `checksum` bigint(20) unsigned NOT NULL,
     `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP(),
     `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP(),
     PRIMARY KEY (`user_id`)
