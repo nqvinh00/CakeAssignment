@@ -63,5 +63,19 @@ func (h *httpd) Login(c *gin.Context) {
 
 	// TODO: define config
 	expire := time.Now().Add(time.Hour * 24)
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, nil)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &model.Claim{
+		Username: user.Username,
+		Email:    user.Email,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(expire),
+		},
+	})
+
+	t, err := token.SignedString([]byte(h.config.SecretKey))
+	if err != nil {
+		responseJSON(c, http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError), nil)
+		return
+	}
+
+	responseJSON(c, http.StatusOK, "Login success", gin.H{"token": t})
 }

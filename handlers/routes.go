@@ -5,15 +5,18 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/nqvinh00/CakeAssignment/dao"
+	"github.com/nqvinh00/CakeAssignment/model"
 )
 
 type httpd struct {
+	config     model.HTTP
 	userDAO    dao.IUserDAO
 	userSecDAO dao.IUserSecDAO
 }
 
-func NewHTTPD(userDAO dao.IUserDAO, userSecDAO dao.IUserSecDAO) *httpd {
+func NewHTTPD(config model.HTTP, userDAO dao.IUserDAO, userSecDAO dao.IUserSecDAO) *httpd {
 	return &httpd{
+		config:     config,
 		userDAO:    userDAO,
 		userSecDAO: userSecDAO,
 	}

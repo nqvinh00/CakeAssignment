@@ -38,7 +38,7 @@ func main() {
 	userDAO := dao.NewUserDAO(db)
 	userSecDAO := dao.NewUserSecDAO(db)
 
-	httpd := handlers.NewHTTPD(userDAO, userSecDAO)
+	httpd := handlers.NewHTTPD(config.HTTP, userDAO, userSecDAO)
 	engine := httpd.SetupRouter()
 	engine.Run(fmt.Sprintf("%s:%d", config.HTTP.Host, config.HTTP.Port))
 }

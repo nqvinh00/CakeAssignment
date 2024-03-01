@@ -6,8 +6,9 @@ type Config struct {
 }
 
 type HTTP struct {
-	Host string `yaml:"host"`
-	Port int    `yaml:"port"`
+	Host      string `yaml:"host"`
+	Port      int    `yaml:"port"`
+	SecretKey string `yaml:"secret_key"`
 }
 
 type Database struct {

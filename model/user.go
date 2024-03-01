@@ -30,5 +30,5 @@ type UserSec struct {
 type Claim struct {
 	Username string
 	Email    string
-	jwt.StandardClaims
+	jwt.RegisteredClaims
 }
