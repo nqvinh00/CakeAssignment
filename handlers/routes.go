@@ -28,12 +28,17 @@ func (h *httpd) SetupRouter() *gin.Engine {
 	// some middlewares here
 
 	// auth group for authentication
+	r.Any("/ping", Ping)
 	auth := r.Group("/auth")
-	auth.POST("/login")
+	auth.POST("/login", h.Login)
 	auth.POST("/signup")
 
 	//
 	return r
+}
+
+func Ping(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"message": "pong"})
 }
 
 func responseJSON(c *gin.Context, status int, message string, data interface{}) {

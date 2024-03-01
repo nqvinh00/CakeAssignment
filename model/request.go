@@ -1,7 +1,9 @@
 package model
 
+import "time"
+
 type Validator interface {
-	Valid() ErrorCode
+	Valid() string
 }
 
 type LoginReq struct {
@@ -10,6 +12,20 @@ type LoginReq struct {
 	Password string `json:"password"`
 }
 
-func (req *LoginReq) Valid() ErrorCode {
+func (req *LoginReq) Valid() string {
+	return Success
+}
+
+type NewUserReq struct {
+	Username    string `json:"username"`
+	Fullname    string `json:"fullname"`
+	PhoneNumber string `json:"phone_number"`
+	Email       string `json:"email"`
+	Password    string `json:"password"`
+	StrBirthday string `json:"birthday"`
+	Birthday    time.Time
+}
+
+func (req *NewUserReq) Valid() string {
 	return Success
 }
