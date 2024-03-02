@@ -1,10 +1,13 @@
 package model
 
+import "fmt"
+
+const Success = "Success"
+
 // TEMP: For simple design
 // TODO: Define error code and error message map
-const (
-	Success           = "Success"
-	UnknownError      = "Unexpected error"
-	UserNotFound      = "User not found"
-	UserAlreadyExists = "User already exists"
+var (
+	ErrUnknownError      = fmt.Errorf("unexpected error")
+	ErrUserNotFound      = fmt.Errorf("user not found")
+	ErrUserAlreadyExists = fmt.Errorf("user already exists")
 )

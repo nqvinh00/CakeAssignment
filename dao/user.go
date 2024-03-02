@@ -23,14 +23,7 @@ var (
 	sqlUpdateUser = `
 	UPDATE user
 	SET
-		status = ?, login_attempt = ?, updated_at = ?
-	WHERE id = ?
-	`
-
-	sqlLastLogin = `
-	UPDATE user
-	SET
-		last_login = ?, updated_at = ?
+		status = ?, login_attempt = ?, last_login = ?, updated_at = ?
 	WHERE id = ?
 	`
 
@@ -38,6 +31,7 @@ var (
 	SELECT id, fullname, phone_number, email, username,
 	campaign_id, status, login_attempt, birthday,
 	last_login, created_at, updated_at
+	FROM user
 	WHERE %s
 	`
 )
@@ -45,7 +39,6 @@ var (
 type IUserDAO interface {
 	Insert(ctx context.Context, user *model.User) (id uint64, err error)
 	Update(ctx context.Context, user *model.User) (err error)
-	LastLogin(ctx context.Context, id uint64) (err error)
 	SelectToLogin(ctx context.Context, loginValue string) (user *model.User, err error)
 	SelectToSignup(ctx context.Context, username, email, phoneNumber string) (user *model.User, err error)
 }
@@ -84,33 +77,8 @@ func (u *userDAO) Insert(ctx context.Context, user *model.User) (id uint64, err 
 
 func (u *userDAO) Update(ctx context.Context, user *model.User) (err error) {
 	result, err := u.db.ExecContext(ctx, sqlUpdateUser,
-		user.Status, user.LoginAttempt, time.Now(),
+		user.Status, user.LoginAttempt, user.LastLogin, time.Now(),
 		user.ID,
-	)
-	if err != nil {
-		return
-	} else if result == nil {
-		err = errors.New("invalid result from database server")
-		return
-	}
-
-	row, err := result.RowsAffected()
-	if err != nil {
-		return
-	}
-
-	if row == 0 {
-		err = sql.ErrNoRows
-	}
-
-	return
-}
-
-func (u *userDAO) LastLogin(ctx context.Context, id uint64) (err error) {
-	now := time.Now()
-	result, err := u.db.ExecContext(ctx, sqlLastLogin,
-		now, now,
-		id,
 	)
 	if err != nil {
 		return
@@ -133,8 +101,14 @@ func (u *userDAO) LastLogin(ctx context.Context, id uint64) (err error) {
 
 func (u *userDAO) SelectToLogin(ctx context.Context, loginValue string) (user *model.User, err error) {
 	user = &model.User{}
-	query := fmt.Sprintf(sqlSelectUserTemplate, "username = ? OR email = ? OR phone_number = ?")
-	if err = u.db.QueryRowContext(ctx, query, loginValue, loginValue, loginValue).Scan(user); err != nil {
+	query := fmt.Sprintf(sqlSelectUserTemplate, "(username = ? OR email = ? OR phone_number = ?) AND status = ?")
+
+	row := u.db.QueryRowContext(ctx, query, loginValue, loginValue, loginValue, model.UserActivatedStatus)
+	err = row.Scan(&user.ID, &user.Fullname, &user.PhoneNumber, &user.Email, &user.Username,
+		&user.CampaignID, &user.Status, &user.LoginAttempt, &user.Birthday,
+		&user.LastLogin, &user.CreatedAt, &user.UpdatedAt,
+	)
+	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
 		}
@@ -150,19 +124,23 @@ func (u *userDAO) SelectToSignup(ctx context.Context, username, email, phoneNumb
 
 	where := ""
 	if username != "" {
-		where += fmt.Sprintf("username = %s", username)
+		where += fmt.Sprintf(`username = "%s"`, username)
 	}
 
 	if email != "" {
-		where += fmt.Sprintf("OR email = %s", email)
-
+		where += fmt.Sprintf(`OR email = "%s"`, email)
 	}
 
 	if phoneNumber != "" {
-		where += fmt.Sprintf("OR phone_number = %s", phoneNumber)
+		where += fmt.Sprintf(`OR phone_number = "%s"`, phoneNumber)
 	}
 
-	if err = u.db.QueryRowContext(ctx, fmt.Sprintf(sqlSelectUserTemplate, where)).Scan(user); err != nil {
+	row := u.db.QueryRowContext(ctx, fmt.Sprintf(sqlSelectUserTemplate, where))
+	err = row.Scan(&user.ID, &user.Fullname, &user.PhoneNumber, &user.Email, &user.Username,
+		&user.CampaignID, &user.Status, &user.LoginAttempt, &user.Birthday,
+		&user.LastLogin, &user.CreatedAt, &user.UpdatedAt,
+	)
+	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
 		}

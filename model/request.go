@@ -1,6 +1,8 @@
 package model
 
-import "time"
+import (
+	"time"
+)
 
 type Validator interface {
 	Valid() string
@@ -23,9 +25,11 @@ type NewUserReq struct {
 	Email       string `json:"email"`
 	Password    string `json:"password"`
 	StrBirthday string `json:"birthday"`
+	CampaignID  uint64 `json:"campaign_id"` // User signup for
 	Birthday    time.Time
 }
 
 func (req *NewUserReq) Valid() string {
+	req.Birthday, _ = time.Parse("02/01/2006", req.StrBirthday)
 	return Success
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/nqvinh00/CakeAssignment/handlers"
 	"github.com/nqvinh00/CakeAssignment/model"
 	"github.com/nqvinh00/CakeAssignment/pkg"
+	"github.com/nqvinh00/CakeAssignment/services"
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -34,11 +35,12 @@ func main() {
 	}
 	defer db.Close()
 
-
 	userDAO := dao.NewUserDAO(db)
 	userSecDAO := dao.NewUserSecDAO(db)
 
-	httpd := handlers.NewHTTPD(config.HTTP, userDAO, userSecDAO)
+	authenticator := services.NewAuthenticator(userDAO, userSecDAO, config.SecretKey)
+
+	httpd := handlers.NewHTTPD(config.HTTP, authenticator, config.SecretKey)
 	engine := httpd.SetupRouter()
 	engine.Run(fmt.Sprintf("%s:%d", config.HTTP.Host, config.HTTP.Port))
 }

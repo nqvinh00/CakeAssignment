@@ -4,21 +4,22 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/nqvinh00/CakeAssignment/dao"
 	"github.com/nqvinh00/CakeAssignment/model"
+	"github.com/nqvinh00/CakeAssignment/services"
+	"github.com/rs/zerolog/log"
 )
 
 type httpd struct {
-	config     model.HTTP
-	userDAO    dao.IUserDAO
-	userSecDAO dao.IUserSecDAO
+	config        model.HTTP
+	jwtSecretKey  string
+	authenticator services.Authenticator
 }
 
-func NewHTTPD(config model.HTTP, userDAO dao.IUserDAO, userSecDAO dao.IUserSecDAO) *httpd {
+func NewHTTPD(config model.HTTP, authenticator services.Authenticator, jwtSecretKey string) *httpd {
 	return &httpd{
-		config:     config,
-		userDAO:    userDAO,
-		userSecDAO: userSecDAO,
+		config:        config,
+		jwtSecretKey: jwtSecretKey,
+		authenticator: authenticator,
 	}
 }
 
@@ -31,9 +32,10 @@ func (h *httpd) SetupRouter() *gin.Engine {
 	r.Any("/ping", Ping)
 	auth := r.Group("/auth")
 	auth.POST("/login", h.Login)
-	auth.POST("/signup")
+	auth.POST("/signup", h.Signup)
 
-	//
+	r.Use(h.authMiddleware())
+	r.Any("/pong", Pong)
 	return r
 }
 
@@ -41,22 +43,28 @@ func Ping(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "pong"})
 }
 
-func responseJSON(c *gin.Context, status int, message string, data interface{}) {
-	c.JSON(http.StatusOK, &response{
-		Error: responseError{
-			Code:    status,
-			Message: message,
-		},
-		Data: data,
-	})
+func Pong(c *gin.Context) {
+	log.Info().Str("username", c.GetString("username")).Str("email", c.GetString("email")).Msg("")
+	c.JSON(http.StatusOK, gin.H{"message": "ping"})
 }
 
-type responseError struct {
-	Code    int
-	Message string
-}
+func (h *httpd) authMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		token := c.Request.Header.Get("token")
+		if token == "" {
+			responseJSON(c, http.StatusUnauthorized, http.StatusText(http.StatusUnauthorized), nil)
+			c.Abort()
+			return
+		}
 
-type response struct {
-	Error responseError
-	Data  interface{}
+		claim, err := h.validateToken(token)
+		if err != nil {
+			responseJSON(c, http.StatusInternalServerError, err.Error(), nil)
+			c.Abort()
+			return
+		}
+		c.Set("username", claim.Username)
+		c.Set("email", claim.Email)
+		c.Next()
+	}
 }

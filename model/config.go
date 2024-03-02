@@ -1,14 +1,14 @@
 package model
 
 type Config struct {
-	HTTP HTTP     `yaml:"http"`
-	DB   Database `yaml:"database"`
+	HTTP      HTTP     `yaml:"http"`
+	SecretKey string   `yaml:"secret_key"`
+	DB        Database `yaml:"database"`
 }
 
 type HTTP struct {
-	Host      string `yaml:"host"`
-	Port      int    `yaml:"port"`
-	SecretKey string `yaml:"secret_key"`
+	Host string `yaml:"host"`
+	Port int    `yaml:"port"`
 }
 
 type Database struct {

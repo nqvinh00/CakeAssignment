@@ -1,7 +1,7 @@
 http:
   host: ""
   port: 8000
-  secret_key: "gA<Nf'<MU*lQGR%su320ad](Pln7yMFI"
+secret_key: "gA<Nf'<MU*lQGR%su320ad](Pln7yMFI"
 
 database:
   db: "assignment"

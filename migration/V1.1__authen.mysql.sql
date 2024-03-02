@@ -4,7 +4,6 @@ CREATE TABLE IF NOT EXISTS `user` (
     `phone_number` varchar(11) NOT NULL DEFAULT '',
     `email` varchar(100) NOT NULL DEFAULT '',
     `username` varchar(100) NOT NULL DEFAULT '',
-    `campaign_id` bigint(20) unsigned NOT NULL DEFAULT 0,
     `birthday` date NOT NULL DEFAULT '1000-01-01',
     `status` tinyint NOT NULL DEFAULT 1,
     `login_attempt` tinyint NOT NULL DEFAULT 3,

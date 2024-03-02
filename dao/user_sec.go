@@ -89,7 +89,9 @@ func (u *userSecDAO) Update(ctx context.Context, us *model.UserSec) (err error) 
 
 func (u *userSecDAO) Select(ctx context.Context, userID uint64) (us *model.UserSec, err error) {
 	us = &model.UserSec{}
-	if err = u.db.QueryRowContext(ctx, sqlSelectUserSec, userID).Scan(us); err != nil {
+	row := u.db.QueryRowContext(ctx, sqlSelectUserSec, userID)
+	err = row.Scan(&us.UserID, &us.Password, &us.CreatedAt, &us.UpdatedAt)
+	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
 		}
