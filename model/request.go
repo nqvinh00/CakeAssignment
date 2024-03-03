@@ -1,6 +1,8 @@
 package model
 
 import (
+	"net/mail"
+	"regexp"
 	"time"
 )
 
@@ -15,6 +17,19 @@ type LoginReq struct {
 }
 
 func (req *LoginReq) Valid() string {
+	if req.Username == "" {
+		return InvalidUsername
+	}
+
+	_, err := mail.ParseAddress(req.Username)
+	if regexp.MustCompile(`\d`).MatchString(req.Username) || err != nil {
+		return InvalidUsername
+	}
+
+	if req.Password == "" {
+		return EmptyPassword
+	}
+
 	return Success
 }
 
@@ -30,6 +45,27 @@ type NewUserReq struct {
 }
 
 func (req *NewUserReq) Valid() string {
-	req.Birthday, _ = time.Parse("02/01/2006", req.StrBirthday)
+	if req.Username == "" && req.Email == "" && req.PhoneNumber == "" {
+		return AtLeastOne
+	}
+
+	if req.PhoneNumber != "" && regexp.MustCompile(`\d`).MatchString(req.PhoneNumber) {
+		return InvalidPhoneNumber
+	}
+
+	_, err := mail.ParseAddress(req.Username)
+	if req.Email != "" && err != nil {
+		return InvalidEmail
+	}
+
+	if req.StrBirthday == "" {
+		return InvalidBirthday
+	}
+
+	req.Birthday, err = time.Parse("02/01/2006", req.StrBirthday)
+	if err != nil {
+		return InvalidBirthday
+	}
+
 	return Success
 }

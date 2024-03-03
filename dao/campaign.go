@@ -16,6 +16,7 @@ var (
 	FROM campaign
 	WHERE id = ?
 	AND status = 1
+	AND end_date >= ?
 	`
 
 	sqlUpdateCampaign = `
@@ -44,7 +45,9 @@ func NewCampaignDAO(db *sql.DB) ICampaignDAO {
 func (c *campaignDAO) SelectByID(ctx context.Context, id uint64) (campaign *model.Campaign, err error) {
 	campaign = &model.Campaign{}
 
-	row := c.db.QueryRowContext(ctx, sqlSelectCampaignByID, id)
+	now := time.Now()
+	today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.Local)
+	row := c.db.QueryRowContext(ctx, sqlSelectCampaignByID, id, today)
 	err = row.Scan(&campaign.ID, &campaign.Name, &campaign.Status, &campaign.VoucherCapacity, &campaign.StartDate,
 		&campaign.EndDate, &campaign.CreatedAt, &campaign.UpdatedAt,
 	)

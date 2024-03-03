@@ -20,9 +20,10 @@ type Authenticator interface {
 }
 
 type authenticator struct {
-	userDAO      dao.IUserDAO
-	userSecDAO   dao.IUserSecDAO
-	jwtSecretKey string
+	userDAO            dao.IUserDAO
+	userSecDAO         dao.IUserSecDAO
+	voucherDistributor VoucherDistributor
+	jwtSecretKey       string
 }
 
 func NewAuthenticator(userDAO dao.IUserDAO, userSecDAO dao.IUserSecDAO, jwtSecretKey string) Authenticator {
@@ -108,6 +109,29 @@ func (a *authenticator) Login(ctx context.Context, username, password string) (t
 
 		err = fmt.Errorf("assword is incorrect, you only have %d times left to retry", user.LoginAttempt)
 		return
+	}
+
+	// Null last login = first time login
+	if !user.LastLogin.Valid {
+		go func(user *model.User) {
+			if user.CampaignID == 0 {
+				return
+			}
+
+			voucher, err := a.voucherDistributor.CreateVoucher(ctx, user.CampaignID, user.ID)
+			if err != nil {
+				log.Err(err).Msgf("create voucher for userId %d failed", user.ID)
+				return
+			}
+
+			if voucher != "" {
+				if err := a.voucherDistributor.AddVoucherForUser(ctx, user, voucher); err != nil {
+					log.Err(err).Msgf("create voucher for userId %d failed", user.ID)
+				}
+			}
+
+			// TODO: notify
+		}(user)
 	}
 
 	user.LoginAttempt = 3

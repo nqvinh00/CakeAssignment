@@ -1,6 +1,22 @@
 version: '3'
 
 services:
+  app:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: app
+    volumes:
+      - "./cmd/config.docker.yml:/config.yml"
+    ports:
+      - 8000:8000
+    command: "-log_level=0 -config=/config.yml"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      flyway:
+        condition: service_completed_successfully
+
   mysql:
     image: mysql/mysql-server:8.0.32
     container_name: mysql
@@ -17,6 +33,14 @@ services:
       timeout: 20s
       retries: 10
     command: mysqld --default-authentication-plugin=mysql_native_password
+  
+  flyway:
+    image: flyway/flyway
+    command: -url=jdbc:mysql://mysql -schemas=assignment -user=root -password=123 -connectRetries=60 migrate
+    volumes:
+      - ./migration:/flyway/sql
+    depends_on:
+      - mysql
 
 volumes:
   mysql_data:
