@@ -12,3 +12,12 @@ type Campaign struct {
 	CreatedAt       time.Time `db:"created_at"`
 	UpdatedAt       time.Time `db:"updated_at"`
 }
+
+type UserVoucher struct {
+	ID         uint64    `db:"id"`
+	UserID     uint64    `db:"user_id"`
+	CampaignID uint64    `db:"campaign_id"`
+	Voucher    string    `db:"voucher"`
+	CreatedAt  time.Time `db:"created_at"`
+	UpdatedAt  time.Time `dB:"updated_at"`
+}
