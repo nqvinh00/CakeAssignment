@@ -23,7 +23,7 @@ docker compose up -d --build
 
 ## API Spec
 
-Using swagggo/swag to generate.
+Using `swagggo/swag` to generate.
 
 Swagger file:
 
