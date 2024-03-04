@@ -3,10 +3,13 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/gin-gonic/gin"
+	_ "github.com/nqvinh00/CakeAssignment/handlers/docs"
 	"github.com/nqvinh00/CakeAssignment/model"
 	"github.com/nqvinh00/CakeAssignment/services"
-	"github.com/rs/zerolog/log"
+
+	"github.com/gin-gonic/gin"
+	"github.com/swaggo/files"
+	"github.com/swaggo/gin-swagger"
 )
 
 type httpd struct {
@@ -18,34 +21,40 @@ type httpd struct {
 func NewHTTPD(config model.HTTP, authenticator services.Authenticator, jwtSecretKey string) *httpd {
 	return &httpd{
 		config:        config,
-		jwtSecretKey: jwtSecretKey,
+		jwtSecretKey:  jwtSecretKey,
 		authenticator: authenticator,
 	}
 }
+
+// @title           Cake Interview Assignment
+// @version         1.0
+
+// @contact.email  nqvinh00@gmail.com
+
+// @host      localhost:8000
+// @BasePath  /
+
+// @securityDefinitions.basic  BasicAuth
 
 func (h *httpd) SetupRouter() *gin.Engine {
 	r := gin.Default()
 
 	// some middlewares here
 
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 	// auth group for authentication
-	r.Any("/ping", Ping)
 	auth := r.Group("/auth")
 	auth.POST("/login", h.Login)
 	auth.POST("/signup", h.Signup)
 
 	r.Use(h.authMiddleware())
-	r.Any("/pong", Pong)
+	r.Any("/ping", Ping) // Test authentication
 	return r
 }
 
 func Ping(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "pong"})
-}
-
-func Pong(c *gin.Context) {
-	log.Info().Str("username", c.GetString("username")).Str("email", c.GetString("email")).Msg("")
-	c.JSON(http.StatusOK, gin.H{"message": "ping"})
 }
 
 func (h *httpd) authMiddleware() gin.HandlerFunc {

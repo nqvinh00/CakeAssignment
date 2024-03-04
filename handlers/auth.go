@@ -7,6 +7,16 @@ import (
 	"github.com/nqvinh00/CakeAssignment/model"
 )
 
+// Login godoc
+// @Summary      Login account
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param        request   body      model.LoginReq  true  "Username and password"
+// @Success      200  {object}  response{data=object}
+// @Failure      400  {object}  response{data=object} "Bad Request"
+// @Failure      500  {object}  response{data=object} "Internal Request Error"
+// @Router       /auth/login [post]
 func (h *httpd) Login(c *gin.Context) {
 	req, ctx := &model.LoginReq{}, c.Request.Context()
 
@@ -34,6 +44,16 @@ func (h *httpd) Login(c *gin.Context) {
 	responseJSON(c, http.StatusOK, "Login success", gin.H{"token": token})
 }
 
+// Signup godoc
+// @Summary      Signup new user account
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param        request   body      model.NewUserReq  true  "User information"
+// @Success      200  {object}  response{data=object{token=string}}
+// @Failure      400  {object}  response{data=object{}} "Bad Request"
+// @Failure      500  {object}  response{data=object{}} "Internal Request Error"
+// @Router       /auth/signup [post]
 func (h *httpd) Signup(c *gin.Context) {
 	req, ctx := &model.NewUserReq{}, c.Request.Context()
 

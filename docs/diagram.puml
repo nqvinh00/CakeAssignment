@@ -1,0 +1,21 @@
+@startuml
+
+== Signup ==
+actor "User" as c
+participant "Mobile app" as w
+participant "Backend" as t
+participant "Database" as e
+
+c -> w: Fill info
+w -> t: Call signup API
+t -> e: Create user and store
+
+== Login ==
+c -> w : Fill info
+w -> t : Call login API
+t -> t : If user login for the first time and register with a campaign, create a voucher
+t -> e : Create voucher and store
+t -> w : Send notification to mobile app
+w -> c : Notify user
+
+@enduml

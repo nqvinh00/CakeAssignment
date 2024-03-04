@@ -1,0 +1,143 @@
+basePath: /
+definitions:
+  handlers.response:
+    properties:
+      data: {}
+      error:
+        $ref: '#/definitions/handlers.responseError'
+    type: object
+  handlers.responseError:
+    properties:
+      code:
+        type: integer
+      message:
+        type: string
+    type: object
+  model.LoginReq:
+    properties:
+      password:
+        type: string
+      username:
+        description: Username could be username/phone_number/email address
+        type: string
+    type: object
+  model.NewUserReq:
+    properties:
+      birthday:
+        type: string
+      campaign_id:
+        description: User signup for
+        type: integer
+      email:
+        type: string
+      fullname:
+        type: string
+      password:
+        type: string
+      phone_number:
+        type: string
+      username:
+        type: string
+    type: object
+host: localhost:8000
+info:
+  contact:
+    email: nqvinh00@gmail.com
+  title: Cake Interview Assignment
+  version: "1.0"
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Username and password
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.LoginReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handlers.response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handlers.response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Request Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handlers.response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      summary: Login account
+      tags:
+      - auth
+  /auth/signup:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: User information
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.NewUserReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handlers.response'
+            - properties:
+                data:
+                  properties:
+                    token:
+                      type: string
+                  type: object
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handlers.response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Request Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handlers.response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      summary: Signup new user account
+      tags:
+      - auth
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"
