@@ -37,8 +37,11 @@ func main() {
 
 	userDAO := dao.NewUserDAO(db)
 	userSecDAO := dao.NewUserSecDAO(db)
+	campaignDAO := dao.NewCampaignDAO(db)
+	voucherDAO := dao.NewVoucherDAO(db)
 
-	authenticator := services.NewAuthenticator(userDAO, userSecDAO, config.SecretKey)
+	distributor := services.NewVoucherDistributor(campaignDAO, voucherDAO)
+	authenticator := services.NewAuthenticator(userDAO, userSecDAO, distributor, config.SecretKey)
 
 	httpd := handlers.NewHTTPD(config.HTTP, authenticator, config.SecretKey)
 	engine := httpd.SetupRouter()

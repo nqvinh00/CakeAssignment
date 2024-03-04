@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"errors"
-	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -11,7 +10,7 @@ import (
 )
 
 func responseJSON(c *gin.Context, status int, message string, data interface{}) {
-	c.JSON(http.StatusOK, &response{
+	c.JSON(status, &response{
 		Error: responseError{
 			Code:    status,
 			Message: message,

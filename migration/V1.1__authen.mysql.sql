@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS `user` (
     `birthday` date NOT NULL DEFAULT '1000-01-01',
     `status` tinyint NOT NULL DEFAULT 1,
     `login_attempt` tinyint NOT NULL DEFAULT 3,
+    `campaign_id` bigint(20) unsigned NOT NULL DEFAULT 0,
     `last_login` datetime,
     `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP(),
     `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP(),

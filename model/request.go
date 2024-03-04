@@ -21,13 +21,8 @@ func (req *LoginReq) Valid() string {
 		return InvalidUsername
 	}
 
-	_, err := mail.ParseAddress(req.Username)
-	if regexp.MustCompile(`\d`).MatchString(req.Username) || err != nil {
-		return InvalidUsername
-	}
-
 	if req.Password == "" {
-		return EmptyPassword
+		return InvalidPassword
 	}
 
 	return Success
@@ -49,11 +44,12 @@ func (req *NewUserReq) Valid() string {
 		return AtLeastOne
 	}
 
-	if req.PhoneNumber != "" && regexp.MustCompile(`\d`).MatchString(req.PhoneNumber) {
+	r, _ := regexp.Compile(`^(0|84)(56|58|59|7[67890]|3[2-9]|8[1-5]|9\d|16[2-9]|12\d|86|88|89|186|188|199)(\d{7})$`)
+	if req.PhoneNumber != "" && !r.Match([]byte(req.PhoneNumber)) {
 		return InvalidPhoneNumber
 	}
 
-	_, err := mail.ParseAddress(req.Username)
+	_, err := mail.ParseAddress(req.Email)
 	if req.Email != "" && err != nil {
 		return InvalidEmail
 	}

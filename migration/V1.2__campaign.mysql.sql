@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS `user_voucher` (
     `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
     `user_id` bigint(20) unsigned NOT NULL,
     `campaign_id` bigint(20) unsigned NOT NULL,
-    `voucher` varchar(8) NOT NULL DEFAULT '',
+    `voucher` varchar(50) NOT NULL DEFAULT '',
     `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP(),
     `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP(),
     PRIMARY KEY (`id`),

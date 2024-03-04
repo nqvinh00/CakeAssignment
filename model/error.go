@@ -7,7 +7,7 @@ import "fmt"
 var (
 	Success            = "Success"
 	InvalidUsername    = "Invalid username"
-	EmptyPassword      = "Password cannot be empty"
+	InvalidPassword    = "Invalid password"
 	AtLeastOne         = "Please submit at least username or phone number or email"
 	InvalidPhoneNumber = "Invalid phone number"
 	InvalidEmail       = "Invalid email"

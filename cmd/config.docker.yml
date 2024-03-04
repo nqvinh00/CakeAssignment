@@ -1,0 +1,15 @@
+http:
+  host: ""
+  port: 8000
+secret_key: "gA<Nf'<MU*lQGR%su320ad](Pln7yMFI"
+
+database:
+  db: "assignment"
+  username: "root"
+  password: "123"
+  host: "mysql:3306"
+  args: "charset=utf8&collation=utf8_general_ci&parseTime=true&loc=Asia%2FHo_Chi_Minh"
+  max_open_conns: 10
+  max_idle_conns: 5
+  max_conn_life_time: 60
+  

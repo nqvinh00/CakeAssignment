@@ -27,7 +27,7 @@ func (h *httpd) Login(c *gin.Context) {
 		} else {
 			responseJSON(c, http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError), nil)
 		}
-		
+
 		return
 	}
 
@@ -52,8 +52,8 @@ func (h *httpd) Signup(c *gin.Context) {
 		Email:       req.Email,
 		Username:    req.Username,
 		PhoneNumber: req.PhoneNumber,
-		// CampaignID: ,
-		Birthday: req.Birthday,
+		CampaignID:  req.CampaignID,
+		Birthday:    req.Birthday,
 	}
 
 	if err := h.authenticator.CreateUser(ctx, user, req.Password); err != nil {

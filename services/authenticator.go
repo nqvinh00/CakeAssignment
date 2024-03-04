@@ -26,11 +26,12 @@ type authenticator struct {
 	jwtSecretKey       string
 }
 
-func NewAuthenticator(userDAO dao.IUserDAO, userSecDAO dao.IUserSecDAO, jwtSecretKey string) Authenticator {
+func NewAuthenticator(userDAO dao.IUserDAO, userSecDAO dao.IUserSecDAO, voucherDistributor VoucherDistributor, jwtSecretKey string) Authenticator {
 	return &authenticator{
-		userDAO:      userDAO,
-		userSecDAO:   userSecDAO,
-		jwtSecretKey: jwtSecretKey,
+		userDAO:            userDAO,
+		userSecDAO:         userSecDAO,
+		jwtSecretKey:       jwtSecretKey,
+		voucherDistributor: voucherDistributor,
 	}
 }
 
@@ -118,14 +119,15 @@ func (a *authenticator) Login(ctx context.Context, username, password string) (t
 				return
 			}
 
-			voucher, err := a.voucherDistributor.CreateVoucher(ctx, user.CampaignID, user.ID)
+			bgrCtx := context.Background()
+			voucher, err := a.voucherDistributor.CreateVoucher(bgrCtx, user.CampaignID, user.ID)
 			if err != nil {
 				log.Err(err).Msgf("create voucher for userId %d failed", user.ID)
 				return
 			}
 
 			if voucher != "" {
-				if err := a.voucherDistributor.AddVoucherForUser(ctx, user, voucher); err != nil {
+				if err := a.voucherDistributor.AddVoucherForUser(bgrCtx, user, voucher); err != nil {
 					log.Err(err).Msgf("create voucher for userId %d failed", user.ID)
 				}
 			}
