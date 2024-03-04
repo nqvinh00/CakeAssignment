@@ -37,3 +37,6 @@ To view docs site:
 ```
 http://localhost:8000/swagger/index.html
 ```
+
+## Diagram
+![diagram](docs/diagram.png)
